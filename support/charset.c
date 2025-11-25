@@ -3362,7 +3362,7 @@ static const set_item alpha[] = {
 	{ 194560, 195101 },
 	{ 196608, 201546 },
 	{ -1, -1 },	// end markers
-	};
+};
 static struct _class_data {
 	const char *name;				// e.g., "alpha"
 	int (*charcheckfunc)(int c);	// function pointer, e.g., isalpha
@@ -3593,7 +3593,7 @@ utfprefix(int32_t wc)
 }
 /* charset_finalize --- condense all the info into the final data structure */
 
-int
+Static int
 charset_finalize(charset_t *set)
 {
 	assert(set != NULL);
@@ -3603,7 +3603,7 @@ charset_finalize(charset_t *set)
 	size_t i, j;
 	for (i = 0, j = 1; j < set->nchars_inuse; i++, j++) {
 		if (set->chars[i] == set->chars[j]) {
-			for (int k = j + 1; k < set->nchars_inuse; j++, k++) {
+			for (size_t k = j + 1; k < set->nchars_inuse; j++, k++) {
 				set->chars[j] = set->chars[k];
 			}
 			set->chars[j] = L'\0';
@@ -3661,7 +3661,7 @@ charset_finalize(charset_t *set)
 			need_shift = true;
 		}
 		if (need_shift) {
-			for (int k = j + 1; k < set->nelems; j++, k++)
+			for (size_t k = j + 1; k < set->nelems; j++, k++)
 				items[j] = items[k];
 			
 			set->nelems--;
@@ -3671,7 +3671,7 @@ charset_finalize(charset_t *set)
 		// otherwise, just continue around the loop
 	}
 	set->nelems8bit = set->nelems;
-	for (int i = 0; i < set->nelems; i++) {
+	for (size_t i = 0; i < set->nelems; i++) {
 		if (set->items[i].start >= 256 && i > 0) {
 			set->nelems8bit = i;	// this is a count, not an index
 			break;
@@ -3683,7 +3683,7 @@ charset_finalize(charset_t *set)
 }
 /* charset_create --- make a new charset_t and initialize it */
 
-charset_t *
+Static charset_t *
 charset_create(int *errcode, int mb_cur_max, bool is_utf8)
 {
 	if (errcode == NULL)
@@ -3704,7 +3704,7 @@ charset_create(int *errcode, int mb_cur_max, bool is_utf8)
 }
 /* charset_add_char --- add a single wide character to the set */
 
-int
+Static int
 charset_add_char(charset_t *set, int32_t wc)
 {
 	if (set == NULL)
@@ -3739,9 +3739,43 @@ charset_add_char(charset_t *set, int32_t wc)
 
 	return CSET_SUCCESS;
 }
+/* charset_add_char_ic --- add a single wide character to the set, and its case alternatives */
+
+Static int
+charset_add_char_ic(charset_t *set, int32_t wc)
+{
+	if (set == NULL)
+		return CSET_EBADPTR;
+	if (set->finalized)
+		return CSET_EFROZEN;
+
+	if (wc < 0)
+		return CSET_ERANGE;
+
+	int result1 = charset_add_char(set, wc);
+
+	if (result1 == CSET_SUCCESS) {
+		int result2, result3;
+		result2 = result3 = CSET_SUCCESS;
+
+		int32_t wcl = set->mb_cur_max == 1 ? tolower(wc) : (int32_t) towlower(wc);
+		int32_t wcu = set->mb_cur_max == 1 ? toupper(wc) : (int32_t) towupper(wc);
+
+		if (wc != wcl || wc != wcu) {
+			result2 = charset_add_char(set, wcl);
+			result3 = charset_add_char(set, wcu);
+		}
+		if (result3 != CSET_SUCCESS)
+			return result3;
+		if (result2 != CSET_SUCCESS)
+			return result2;
+	}
+
+	return result1;
+}
 /* charset_add_range --- add a range item */
 
-int
+Static int
 charset_add_range(charset_t *set, int32_t first, int32_t last)
 {
 	if (set == NULL)
@@ -3780,7 +3814,7 @@ charset_add_range(charset_t *set, int32_t first, int32_t last)
 }
 /* charset_invert --- invert the ranges in set and return a new set */
 
-charset_t *
+Static charset_t *
 charset_invert(charset_t *set, int *errcode)
 {
 	int ret = CSET_SUCCESS;
@@ -3817,7 +3851,7 @@ charset_invert(charset_t *set, int *errcode)
 
 	int low = 0;
 
-	for (int i = 0; i < set->nelems; i++) {
+	for (size_t i = 0; i < set->nelems; i++) {
 		if (low < set->items[i].start) {
 			if ((ret = charset_add_range(newset, low, set->items[i].start - 1)) != CSET_SUCCESS)
 				goto fail;
@@ -3839,7 +3873,8 @@ fail:
 }
 /* charset_set_no_newline --- set the value of the "no newlines" flag */
 
-int charset_set_no_newlines(charset_t *set, bool no_newlines)
+Static int
+charset_set_no_newlines(charset_t *set, bool no_newlines)
 {
 	if (set == NULL)
 		return CSET_EBADPTR;
@@ -3851,7 +3886,7 @@ int charset_set_no_newlines(charset_t *set, bool no_newlines)
 }
 /* charset_add_equiv --- add an equivalence class */
 
-int
+Static int
 charset_add_equiv(charset_t *set, int32_t equiv)
 {
 	if (set == NULL)
@@ -3883,7 +3918,7 @@ charset_add_equiv(charset_t *set, int32_t equiv)
 }
 /* charset_add_collate --- add a collating sequence */
 
-int
+Static int
 charset_add_collate(charset_t *set, const int32_t *collate)
 {
 	if (set == NULL)
@@ -3900,7 +3935,7 @@ charset_add_collate(charset_t *set, const int32_t *collate)
 }
 /* charset_add_cclass --- add a character class, like "alnum" */
 
-int
+Static int
 charset_add_cclass(charset_t *set, const char *cclass)
 {
 	if (set == NULL)
@@ -3968,9 +4003,33 @@ charset_add_cclass(charset_t *set, const char *cclass)
 
 	return CSET_SUCCESS;
 }
+/* charset_add_cclass2 --- get class name from unterminated string */
+
+Static int
+charset_add_cclass2(charset_t *set, const char *bp, const char *ep)
+{
+	if (bp == NULL || ep == NULL || bp >= ep)
+		return CSET_EBADPTR;
+
+#define ARBITRARY_LIMIT	101		// 100 + '\0'
+	char cclass[ARBITRARY_LIMIT];
+
+	if (ep - bp >= ARBITRARY_LIMIT)
+		return CSET_ECTYPE;
+
+	int i;
+	for (i = 0; bp < ep; i++, bp++)
+		cclass[i] = *bp;
+	
+	cclass[i] = '\0';
+
+	return charset_add_cclass(set, cclass);
+
+#undef ARBITRARY_LIMIT
+}
 /* charset_copy --- create a new charset that is copy of the original */
 
-charset_t *
+Static charset_t *
 charset_copy(charset_t *set, int *errcode)
 {
 	if (errcode == NULL)
@@ -4009,7 +4068,7 @@ charset_copy(charset_t *set, int *errcode)
 	*errcode = CSET_SUCCESS;
 	return newset;
 }
-int
+Static int
 charset_merge(charset_t *dest, charset_t *src)
 {
 	charset_t *set = dest;
@@ -4070,7 +4129,7 @@ charset_merge(charset_t *dest, charset_t *src)
 }
 /* charset_in_set --- see if a character is in the set */
 
-bool
+Static bool
 charset_in_set(const charset_t *set, int32_t the_char)
 {
 	int ret;
@@ -4093,7 +4152,7 @@ charset_in_set(const charset_t *set, int32_t the_char)
 }
 /* charset_free --- free all storage */
 
-int
+Static int
 charset_free(const charset_t *set)
 {
 	if (set == NULL)
@@ -4112,7 +4171,7 @@ charset_free(const charset_t *set)
 }
 /* charset_firstbytes --- return the set of prefix bytes for the range */
 
-charset_firstbytes_t
+Static charset_firstbytes_t
 charset_firstbytes(charset_t *set, int *errcode)
 {
 	int ret;
@@ -4139,21 +4198,21 @@ charset_firstbytes(charset_t *set, int *errcode)
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
 	if (set->mb_cur_max == 1) {
-		for (int i = 0; i < set->nelems; i++) {
+		for (size_t i = 0; i < set->nelems; i++) {
 			if (set->items[i].start > 255)
 				break;
 			uint32_t low = set->items[i].start;
 			uint32_t high = min(set->items[i].end, 255);
 
-			for (int b = low; b <= high; b++)
+			for (uint32_t b = low; b <= high; b++)
 				result.bytes[b] = true;
 		}
 	} else if (set->is_utf8) {
-		for (int i = 0; i < set->nelems; i++) {
+		for (size_t i = 0; i < set->nelems; i++) {
 			uint32_t low = utfprefix(set->items[i].start);
 			uint32_t high = utfprefix(set->items[i].end);
 
-			for (int b = low; b <= high; b++)
+			for (uint32_t b = low; b <= high; b++)
 				result.bytes[b] = true;
 		}
 	}
@@ -4165,7 +4224,7 @@ done:
 }
 /* charset_dump --- dump out the data structures */
 
-void
+Static void
 charset_dump(const charset_t *set, FILE *fp, bool use_c_format)
 {
 	static const char *boolval[] = {
@@ -4178,7 +4237,7 @@ charset_dump(const charset_t *set, FILE *fp, bool use_c_format)
 
 	set_item *items = set->items;
 	if (use_c_format) {
-		for (int i = 0; i < set->nelems; i++) {
+		for (size_t i = 0; i < set->nelems; i++) {
 			fprintf(fp, "\t{ %d, %d },\n", items[i].start, items[i].end);
 		}
 	} else {
@@ -4190,8 +4249,8 @@ charset_dump(const charset_t *set, FILE *fp, bool use_c_format)
 		fprintf(fp, "nelems = %zd\n", set->nelems);
 		fprintf(fp, "nelems8bit = %zd\n", set->nelems8bit);
 		
-		for (int i = 0; i < set->nelems; i++) {
-			fprintf(fp, "%3d. RANGE: start = L'%lc' (%d), end = L'%lc' (%d)\n",
+		for (size_t i = 0; i < set->nelems; i++) {
+			fprintf(fp, "%3zd. RANGE: start = L'%lc' (%d), end = L'%lc' (%d)\n",
 				i, items[i].start, items[i].start, items[i].end, items[i].end);
 		}
 	}

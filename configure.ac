@@ -503,15 +503,13 @@ EOF
 	fi
 	for i in . support extension
 	do
-		sed -e '/-O2/s///' -e '/^CFLAGS = /s//&${DEBUG} /' \
-			$i/Makefile > foo
-		mv foo $i/Makefile
 		# Use test -f in case --disable-extensions was used,
 		# in which case there won't be a Makefile in the extension
 		# directory.  This fixes a bug report.
 		if test -f $i/Makefile
 		then
-			sed -e '/-O2/s///' -e '/^CFLAGS = /s//&${DEBUG} /' $i/Makefile > foo
+			sed -e '/-O2/s///' -e '/^CFLAGS = /s//&${DEBUG} /' \
+			-e '/^CXXFLAGS = /s//&${DEBUG} /' $i/Makefile > foo
 			mv foo $i/Makefile
 		fi
 	done
