@@ -1,3 +1,9 @@
+2025-12-06         Arnold D. Robbins     <arnold@skeeve.com>
+
+	* minrx.cpp, charset.h, charset.c: Updated to latest.
+	* Makefile.am: charset.c is no longer compiled separately.
+	* minrx.c: Include charset.c, bug fix for equivalence class parsing.
+
 2025-12-01         Arnold D. Robbins     <arnold@skeeve.com>
 
 	* minrx.cpp, charset.c: Updated.

@@ -38,10 +38,11 @@
 #include <wchar.h>
 #include <wctype.h>
 #include <langinfo.h>
-#ifdef CHARSET
-#include "charset.h"
-#endif
 #include "minrx.h"
+#define CHARSET	1
+#ifdef CHARSET
+#include "charset.c"
+#endif
 
 #ifdef __GNUC__
 #define INLINE __attribute__((__always_inline__)) inline
@@ -1442,6 +1443,7 @@ CSet_parse(CSet *cs, minrx_regcomp_flags_t flags, WConv *wconv)
 				if (wc != L'='
 				    || (wc = WConv_nextchr(wconv)) != L']')
 					return MINRX_REG_ECOLLATE;
+				wc = WConv_nextchr(wconv);
 			}
 		}
 

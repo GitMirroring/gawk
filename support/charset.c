@@ -8730,7 +8730,7 @@ is_found(const charset_t *set, int32_t the_char)
 	if (the_char < 256 && set->nelems8bit < set->nelems)
 		nelems = set->nelems8bit;
 	
-	found = bsearch(& key, set->items, nelems,
+	found = (set_item *) bsearch(& key, set->items, nelems,
 					sizeof(set_item), item_compare_for_searching);
 	
 	return found != NULL;
@@ -8977,6 +8977,7 @@ Static charset_t *
 charset_invert(charset_t *set, int *errcode)
 {
 	int ret = CSET_SUCCESS;
+	int low;
 
 	if (errcode == NULL)
 		return NULL;
@@ -9008,7 +9009,7 @@ charset_invert(charset_t *set, int *errcode)
 			goto fail;
 	}
 
-	int low = 0;
+	low = 0;
 
 	for (size_t i = 0; i < set->nelems; i++) {
 		if (low < set->items[i].start) {
@@ -9070,7 +9071,10 @@ charset_add_equiv(charset_t *set, int32_t equiv)
 						sizeof(struct ref), cmp_refs);
 
 	// set up key for the equivs_table
-	struct equiv key_equiv = { 0 };
+	struct equiv key_equiv;
+	// use memset() not an initializer to avoid compiler warnings.
+	memset(& key_equiv, 0, sizeof(key_equiv));
+
 	if (ref == NULL)			// was not in reference table
 		key_equiv.the_char = equiv;
 	else
