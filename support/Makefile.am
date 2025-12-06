@@ -48,8 +48,6 @@ noinst_LIBRARIES = libsupport.a
 libsupport_a_SOURCES = \
 	attribute.h \
 	cdefs.h \
-	charset.c \
-	charset.h \
 	dfa.c \
 	dfa.h \
 	dynarray.h \
@@ -82,6 +80,8 @@ libsupport_a_SOURCES = \
 if USE_PERSISTENT_MALLOC
 libsupport_a_SOURCES += pma.c pma.h
 endif
+
+# charset.c and charset.h are #include'd into minrx.
 
 CXXFLAGS = @CXXFLAGS@
 
