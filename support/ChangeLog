@@ -1,9 +1,3 @@
-2025-12-09         Arnold D. Robbins     <arnold@skeeve.com>
-
-	* mpfrrem.awk, mpfrrem.ok: Add test cases for the MPFR mod
-	operation with non-integer arguments.
-	Thanks to Nethox <nethox+awk@gmail.com> for the patch.
-
 2025-12-08         Arnold D. Robbins     <arnold@skeeve.com>
 
 	* minrx.cpp: Updated.
