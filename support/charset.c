@@ -3388,7 +3388,7 @@ static struct _class_cache {
 	charset_t *set;
 	struct _class_cache *next;	// linked list
 } *class_cache[53];
-static struct equiv {
+static const struct equiv {
 	int32_t		the_char;
 	int			count;
 	int32_t		equivs[200];
@@ -3821,7 +3821,7 @@ static struct equiv {
 	{ 0x2f81c, 17, { 0x2f88f, 0x2f9e0, 0x2f9e1, 0x2f9e5, 0x2f9ed, 0x2f9f1, 0x2f9f6, 0x2f9f7, 0x2f9fb, 0x2f9fd, 0x2fa01, 0x2fa09, 0x2fa10, 0x2fa12, 0x2fa13, 0x2fa14, 0x2fa1d, } },
 };
 
-static struct ref {
+static const struct ref {
 	int32_t		the_char;
 	int32_t		key_char;
 } ref_table[] = {
