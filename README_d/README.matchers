@@ -1,4 +1,4 @@
-Sat Jul 20 10:18:28 PM IDT 2024
+Tue Dec  9 04:05:05 PM IST 2025
 ===============================
 
 		* I * M * P * O * R * T * A * N * T *
@@ -25,10 +25,6 @@ POSIX compliant, then you should consider revising your application.
 Please use the gawkbug script to report any issues, as would be done
 for any other bug. See node Bugs in the manual for more details; it's
 online at https://www.gnu.org/software/gawk/manual/html_node/Bugs.html.
-
-MinRX is currently written in C++, so you will need to have g++
-installed on your system.  It will eventually be rewritten in C for
-greater portability.
 
 PLEASE NOTE! The original GNU matchers will eventually be removed from
 gawk.  So, please take the time to notice and report any issues in the
