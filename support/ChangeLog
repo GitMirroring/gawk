@@ -2,6 +2,7 @@
 
 	* charset.c: Updated. Make the big tables const.
 	* minrx.c: New version from Mike. (Hurray!)
+	* Makefile.am (EXTRA_DIST): Add charset.c and charset.h.
 
 2025-12-08         Arnold D. Robbins     <arnold@skeeve.com>
 

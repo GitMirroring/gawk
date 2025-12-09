@@ -367,6 +367,8 @@ EXTRA_DIST = \
         ChangeLog.0 \
 	Makefile.am \
 	Makefile.in \
+	charset.c \
+	charset.h \
 	pma.h \
 	pma.c \
 	regcomp.c \
@@ -386,8 +388,6 @@ libsupport_a_SOURCES = attribute.h cdefs.h dfa.c dfa.h dynarray.h \
 	malloc/dynarray_at_failure.c malloc/dynarray_emplace_enlarge.c \
 	malloc/dynarray_finalize.c malloc/dynarray_resize.c \
 	malloc/dynarray_resize_clear.c $(am__append_1)
-
-# charset.c and charset.h are #include'd into minrx.
 
 # For some make's, e.g. OpenBSD, that don't define this
 RM = rm -f

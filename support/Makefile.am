@@ -35,6 +35,8 @@ EXTRA_DIST = \
         ChangeLog.0 \
 	Makefile.am \
 	Makefile.in \
+	charset.c \
+	charset.h \
 	pma.h \
 	pma.c \
 	regcomp.c \
@@ -80,8 +82,6 @@ libsupport_a_SOURCES = \
 if USE_PERSISTENT_MALLOC
 libsupport_a_SOURCES += pma.c pma.h
 endif
-
-# charset.c and charset.h are #include'd into minrx.
 
 # For some make's, e.g. OpenBSD, that don't define this
 RM = rm -f
