@@ -6859,7 +6859,7 @@ Case is always significant in compatibility mode.
 @node Choosing Matchers
 @section Selecting the Regexp Matching Engine
 
-Release @strong{FIXME: 5.x.y} of @command{gawk} introduced a new
+Release 5.4.0 of @command{gawk} introduced a new
 regular expression matching engine, named
 @uref{https://github.com/mikehaertel/minrx, MinRX}.
 
@@ -42610,6 +42610,13 @@ GNU/Linux distributions.
 Version 5.4 added the following features:
 
 @itemize
+
+@item
+Use of the new MinRX regular expression matcher as the default
+matching engine
+(@pxref{Choosing Matchers}).
+This brings full POSIX compliance to @command{gawk}'s
+regular expression matching.
 
 @cindex @code{@@} (at-sign) @subentry @code{@@nsinclude} directive
 @cindex at-sign (@code{@@}) @subentry @code{@@nsinclude} directive
